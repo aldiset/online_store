@@ -1,7 +1,12 @@
 package models
 
 import (
+	"errors"
 	"time"
+
+	"online_store/internal/authentication"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -21,4 +26,48 @@ func (u *User) Create() (*User, error) {
 		return &User{}, err
 	}
 	return u, nil
+}
+
+func GetUserByID(id uint) (User, error) {
+	var user User
+
+	if err := DB.First(&user, id).Error; err != nil {
+		return user, errors.New("User not found!")
+	}
+	user.HiddenPassword()
+
+	return user, nil
+}
+
+func (user *User) HiddenPassword() {
+	user.Password = ""
+}
+
+func VerifyPassword(password, hashPassword string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hashPassword), []byte(password))
+}
+
+func LoginCheck(username, password string) (string, error) {
+	var err error
+
+	user := User{}
+
+	err = DB.Model(User{}).Where("username = ?", username).Take(&user).Error
+
+	if err != nil {
+		return "", err
+	}
+
+	err = VerifyPassword(password, user.Password)
+
+	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
+		return "", err
+	}
+
+	token, err := authentication.GenerateToken(user.Id)
+
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }

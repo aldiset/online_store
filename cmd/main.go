@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"online_store/internal/authentication"
 	"online_store/internal/core"
 	"online_store/internal/models"
 
@@ -21,6 +22,11 @@ func main() {
 	})
 
 	auth.POST("/register", core.RegisterUser)
+	auth.POST("/login", core.Login)
+
+	whoami := r.Group("/api/me")
+	whoami.Use(authentication.JwtAuth())
+	whoami.GET("/", core.CurrentUser)
 
 	r.Run(":80")
 }
