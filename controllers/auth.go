@@ -1,15 +1,17 @@
-package core
+package controllers
 
 import (
+	"fmt"
 	"net/http"
-	"online_store/internal/authentication"
-	"online_store/internal/models"
+	"online_store/middleware"
+	"online_store/models"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type RegisterDataUser struct {
+type UserCreate struct {
 	Fullname string `json:"fullname" binding:"required"`
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
@@ -17,7 +19,7 @@ type RegisterDataUser struct {
 }
 
 func RegisterUser(c *gin.Context) {
-	var data RegisterDataUser
+	var data UserCreate
 
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -31,8 +33,9 @@ func RegisterUser(c *gin.Context) {
 	user.Username = data.Username
 	user.Password = string(password)
 	user.Email = data.Email
+	user.UpdateAt = time.Now()
 
-	_, err := user.Create()
+	_, err := CreateUser(&user)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -59,7 +62,7 @@ func Login(c *gin.Context) {
 	user.Username = data.Username
 	user.Password = data.Password
 
-	token, err := models.LoginCheck(user.Username, user.Password)
+	token, err := LoginCheck(user.Username, user.Password)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "username or password isincorrect!"})
@@ -70,13 +73,13 @@ func Login(c *gin.Context) {
 }
 
 func CurrentUser(c *gin.Context) {
-	user_id, err := authentication.ExtractTokenID(c)
+	user_id, err := middleware.ExtractTokenID(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	user, err := models.GetUserByID(user_id)
+	fmt.Println(user_id)
+	user, err := GetUserByID(user_id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -84,4 +87,33 @@ func CurrentUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": user})
+}
+
+func VerifyPassword(password, hashPassword string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hashPassword), []byte(password))
+}
+
+func LoginCheck(username, password string) (string, error) {
+	var err error
+
+	user := models.User{}
+
+	err = models.DB.Model(models.User{}).Where("username = ?", username).Take(&user).Error
+
+	if err != nil {
+		return "", err
+	}
+
+	err = VerifyPassword(password, user.Password)
+
+	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
+		return "", err
+	}
+
+	token, err := middleware.GenerateToken(user.Id)
+
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }
