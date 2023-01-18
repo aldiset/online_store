@@ -36,5 +36,12 @@ func ConnectDB() {
 	} else {
 		fmt.Println("We are connected to the database ", DBDriver)
 	}
-	DB.AutoMigrate(&User{})
+	DB.AutoMigrate(
+		&User{},
+		&Category{},
+		&PaymentMethod{},
+		&Product{},
+		&Cart{},
+		&Transaction{},
+	)
 }

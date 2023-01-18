@@ -1,10 +1,8 @@
 package models
 
-import (
-	"time"
-)
+import "time"
 
-type Category struct {
+type PaymentMethod struct {
 	Id        uint      `gorm:"primary_key;" json:"id"`
 	Name      string    `gorm:"size:255;not null;unique" json:"name"`
 	Code      string    `gorm:"size:255;not null;unique" json:"code"`
