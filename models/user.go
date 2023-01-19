@@ -9,5 +9,5 @@ type User struct {
 	Password  string    `gorm:"size:255;not null;" json:"password"`
 	Email     string    `gorm:"size:255;not null;unique" json:"email"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdateAt  time.Time `gorm:"autoUpdateTime:false" json:"updated_at"`
+	UpdateAt  time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }

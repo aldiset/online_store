@@ -7,5 +7,5 @@ type PaymentMethod struct {
 	Name      string    `gorm:"size:255;not null;unique" json:"name"`
 	Code      string    `gorm:"size:255;not null;unique" json:"code"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdateAt  time.Time `gorm:"autoUpdateTime:true" json:"updated_at"`
+	UpdateAt  time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
