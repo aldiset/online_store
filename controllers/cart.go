@@ -7,22 +7,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TransactionInput struct {
-	CartID            uint   `json:"cart_id"`
-	PaymentMethodCode string `json:"code"`
+type CartInput struct {
+	ProductID int `json:"product_id"`
+	Quantity  int `json:"quantity"`
+	Amount    int `json:"amount"`
 }
 
-func CreateTransaction(c *gin.Context) {
-	var input TransactionInput
+func CreateCart(c *gin.Context) {
+	var input CartInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	transaction := models.Transaction{}
-	transaction.CartID = input.CartID
-	transaction.PaymentMethodCode = input.PaymentMethodCode
+	cart := models.Cart{}
+	cart.ProductID = input.ProductID
+	cart.Quantity = input.Quantity
+	cart.Amount = input.Amount
 
-	err := models.DB.Create(&transaction).Error
+	err := models.DB.Create(&cart).Error
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -31,27 +33,27 @@ func CreateTransaction(c *gin.Context) {
 	c.JSON(http.StatusCreated, Response{
 		Status:  "success",
 		Message: "success",
-		Data:    transaction,
+		Data:    cart,
 	})
 }
 
-func GetAllTransaction(c *gin.Context) {
-	var transaction []models.Transaction
-	models.DB.Find(&transaction)
+func GetAllCart(c *gin.Context) {
+	var cart []models.Cart
+	models.DB.Find(&cart)
 	c.JSON(http.StatusOK, Response{
 		Status:  "success",
 		Message: "success",
-		Data:    transaction,
+		Data:    cart,
 	})
 }
 
-func GetTransactionById(c *gin.Context) {
-	var transaction models.Transaction
+func GetCartById(c *gin.Context) {
+	var cart models.Cart
 	id := c.Param("id")
-	if err := models.DB.First(&transaction, id).Error; err != nil {
+	if err := models.DB.First(&cart, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{
 			Status:  "Not Found",
-			Message: "transaction id " + id + " not found",
+			Message: "Cart id " + id + " not found",
 			Data:    NullResponse{},
 		})
 		return
@@ -59,17 +61,17 @@ func GetTransactionById(c *gin.Context) {
 	c.JSON(http.StatusOK, Response{
 		Status:  "success",
 		Message: "success",
-		Data:    transaction,
+		Data:    cart,
 	})
 }
 
-func UpdateTransaction(c *gin.Context) {
-	var transaction models.Transaction
-	var input TransactionInput
-	var updateinput models.Transaction
+func UpdateCart(c *gin.Context) {
+	var cart models.Cart
+	var input CartInput
+	var updateinput models.Cart
 	id := c.Param("id")
 
-	if err := models.DB.First(&transaction, id).Error; err != nil {
+	if err := models.DB.First(&cart, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{
 			Status:  "Not Found",
 			Message: "user id " + id + " not found",
@@ -83,22 +85,23 @@ func UpdateTransaction(c *gin.Context) {
 		return
 	}
 
-	updateinput.CartID = input.CartID
-	updateinput.PaymentMethodCode = input.PaymentMethodCode
+	updateinput.ProductID = input.ProductID
+	updateinput.Quantity = input.Quantity
+	updateinput.Amount = input.Amount
 
-	models.DB.Model(&transaction).Updates(updateinput)
+	models.DB.Model(&cart).Updates(updateinput)
 
 	c.JSON(http.StatusOK, Response{
 		Status:  "Success",
 		Message: "Success",
-		Data:    transaction,
+		Data:    cart,
 	})
 }
 
-func DeleteTransaction(c *gin.Context) {
-	var transaction models.Transaction
+func DeleteCart(c *gin.Context) {
+	var cart models.Cart
 	id := c.Param("id")
-	if err := models.DB.First(&transaction, id).Error; err != nil {
+	if err := models.DB.First(&cart, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{
 			Status:  "Not Found",
 			Message: "user id " + id + " not found",
@@ -106,7 +109,7 @@ func DeleteTransaction(c *gin.Context) {
 		})
 		return
 	}
-	models.DB.Delete(&transaction)
+	models.DB.Delete(&cart)
 
 	c.JSON(http.StatusOK, Response{
 		Status:  "Success",

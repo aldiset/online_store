@@ -51,6 +51,11 @@ func GetUserById(c *gin.Context) {
 	})
 }
 
+// @Summary get all user
+// @ID get-all-user
+// @Produce json
+// @Success 200 {object} models.User
+// @Router /user [get]
 func GetAllUser(c *gin.Context) {
 	var user []models.User
 	models.DB.Find(&user)
