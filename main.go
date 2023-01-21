@@ -13,13 +13,6 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title API Online Store
-// @version 1.0
-// @description You can visit the GitHub repository at https://github.com/aldiset/online_store
-
-// @host localhost:80
-// @BasePath /
-// @query.collection.format multi
 func main() {
 	models.ConnectDB()
 
@@ -40,7 +33,7 @@ func main() {
 	routes.CartRoutes(api.Group("/cart"))
 	routes.TransactionRoutes(api.Group("/transaction"))
 
-	r.Run(":80")
+	r.Run("0.0.0.0:8080")
 }
 
 func Index(c *gin.Context) {

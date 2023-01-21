@@ -14,6 +14,7 @@ type TransactionInput struct {
 
 func CreateTransaction(c *gin.Context) {
 	var input TransactionInput
+	Logger(c)
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -37,6 +38,7 @@ func CreateTransaction(c *gin.Context) {
 
 func GetAllTransaction(c *gin.Context) {
 	var transaction []models.Transaction
+	Logger(c)
 	models.DB.Find(&transaction)
 	c.JSON(http.StatusOK, Response{
 		Status:  "success",
@@ -47,6 +49,7 @@ func GetAllTransaction(c *gin.Context) {
 
 func GetTransactionById(c *gin.Context) {
 	var transaction models.Transaction
+	Logger(c)
 	id := c.Param("id")
 	if err := models.DB.First(&transaction, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{
@@ -67,6 +70,7 @@ func UpdateTransaction(c *gin.Context) {
 	var transaction models.Transaction
 	var input TransactionInput
 	var updateinput models.Transaction
+	Logger(c)
 	id := c.Param("id")
 
 	if err := models.DB.First(&transaction, id).Error; err != nil {
@@ -97,6 +101,7 @@ func UpdateTransaction(c *gin.Context) {
 
 func DeleteTransaction(c *gin.Context) {
 	var transaction models.Transaction
+	Logger(c)
 	id := c.Param("id")
 	if err := models.DB.First(&transaction, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{

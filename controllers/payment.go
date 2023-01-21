@@ -14,6 +14,7 @@ type PaymentInput struct {
 
 func CreatePayment(c *gin.Context) {
 	var input PaymentInput
+	Logger(c)
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -37,6 +38,7 @@ func CreatePayment(c *gin.Context) {
 
 func GetAllPayment(c *gin.Context) {
 	var payment []models.PaymentMethod
+	Logger(c)
 	models.DB.Find(&payment)
 	c.JSON(http.StatusOK, Response{
 		Status:  "success",
@@ -47,6 +49,7 @@ func GetAllPayment(c *gin.Context) {
 
 func GetPaymentById(c *gin.Context) {
 	var payment models.PaymentMethod
+	Logger(c)
 	id := c.Param("id")
 	if err := models.DB.First(&payment, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{
@@ -67,6 +70,7 @@ func UpdatePayment(c *gin.Context) {
 	var payment models.PaymentMethod
 	var input PaymentInput
 	var updateinput models.PaymentMethod
+	Logger(c)
 	id := c.Param("id")
 
 	if err := models.DB.First(&payment, id).Error; err != nil {
@@ -97,6 +101,7 @@ func UpdatePayment(c *gin.Context) {
 
 func DeletePayment(c *gin.Context) {
 	var payment models.PaymentMethod
+	Logger(c)
 	id := c.Param("id")
 	if err := models.DB.First(&payment, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{

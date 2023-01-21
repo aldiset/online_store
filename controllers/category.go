@@ -14,6 +14,7 @@ type CategoryInput struct {
 
 func CreateCategory(c *gin.Context) {
 	var input CategoryInput
+	Logger(c)
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -37,6 +38,7 @@ func CreateCategory(c *gin.Context) {
 
 func GetAllCategory(c *gin.Context) {
 	var category []models.Category
+	Logger(c)
 	models.DB.Find(&category)
 	c.JSON(http.StatusOK, Response{
 		Status:  "success",
@@ -47,6 +49,7 @@ func GetAllCategory(c *gin.Context) {
 
 func GetCategoryById(c *gin.Context) {
 	var category models.Category
+	Logger(c)
 	id := c.Param("id")
 	if err := models.DB.First(&category, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{
@@ -67,6 +70,7 @@ func UpdateCategory(c *gin.Context) {
 	var category models.Category
 	var input CategoryInput
 	var updateinput models.Category
+	Logger(c)
 	id := c.Param("id")
 
 	if err := models.DB.First(&category, id).Error; err != nil {
@@ -97,6 +101,7 @@ func UpdateCategory(c *gin.Context) {
 
 func DeleteCategory(c *gin.Context) {
 	var category models.Category
+	Logger(c)
 	id := c.Param("id")
 	if err := models.DB.First(&category, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{

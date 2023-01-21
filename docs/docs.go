@@ -4,80 +4,711 @@ package docs
 
 import "github.com/swaggo/swag"
 
-const docTemplate = `{
-    "schemes": {{ marshal .Schemes }},
-    "swagger": "2.0",
-    "info": {
-        "description": "{{escape .Description}}",
-        "title": "{{.Title}}",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "MIT",
-            "url": "https://opensource.org/licenses/MIT"
-        },
-        "version": "{{.Version}}"
-    },
-    "host": "{{.Host}}",
-    "basePath": "{{.BasePath}}",
-    "paths": {
-        "/user": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "get all user",
-                "operationId": "get-all-user",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    }
-                }
-            }
-        }
-    },
-    "definitions": {
-        "models.User": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "fullname": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        }
-    },
-    "securityDefinitions": {
-        "JWT": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
-        }
-    }
-}`
+const docTemplate = `openapi: '3.0.3'
+info:
+  title: API Online Store
+  version: '1.0'
+servers:
+  - url: /api
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User' 
+        '405':
+          description: Invalid input
+    
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token' 
+        '405':
+          description: Invalid input
+  
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: [] 
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+      
+  /auth/me:
+    get:
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+
+  /user:
+    get:
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+  
+  /user/{id}:
+    get:
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: get user by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+
+    put: 
+      tags: 
+        - User 
+      security:
+        - bearerAuth: []
+      requestBody: 
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/User'
+      parameters:
+        - name: id
+          in: path
+          description: update user by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+    
+    delete:
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: get user by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+  
+  /category: 
+    post: 
+      tags:
+        - Category
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Category'
+      responses:
+        '201':
+          description: Created
+        '405':
+          description: Invalid input
+    get:
+      tags:
+        - Category
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+      
+  /category/{id}:
+    get:
+      tags:
+        - Category
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: get Category by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+
+    put: 
+      tags: 
+        - Category
+      security:
+        - bearerAuth: [] 
+      requestBody: 
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Category'
+      parameters:
+        - name: id
+          in: path
+          description: update Category by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+    
+    delete:
+      tags:
+        - Category
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: get Category by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+
+  /product: 
+    post: 
+      tags:
+        - Product
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Created
+        '405':
+          description: Invalid input
+    get:
+      tags:
+        - Product
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: category
+          in: query
+          schema: 
+            type: string
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+      
+  /product/{id}:
+    get:
+      tags:
+        - Product
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: get Product by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+
+    put: 
+      tags: 
+        - Product 
+      security:
+        - bearerAuth: []
+      requestBody: 
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Product'
+      parameters:
+        - name: id
+          in: path
+          description: update Product by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+    
+    delete:
+      tags:
+        - Product
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: get Product by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+
+  /payment: 
+    post: 
+      tags:
+        - Payment
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Payment'
+      responses:
+        '201':
+          description: Created
+        '405':
+          description: Invalid input
+    get:
+      tags:
+        - Payment
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+      
+  /payment/{id}:
+    get:
+      tags:
+        - Payment
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: get Payment by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+
+    put: 
+      tags: 
+        - Payment 
+      security:
+        - bearerAuth: []
+      requestBody: 
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Payment'
+      parameters:
+        - name: id
+          in: path
+          description: update Payment by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+    
+    delete:
+      tags:
+        - Payment
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: get Payment by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+  
+  /cart: 
+    post: 
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Cart'
+      responses:
+        '201':
+          description: Created
+        '405':
+          description: Invalid input
+    get:
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+      
+  /cart/{id}:
+    get:
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: get Cart by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+
+    put: 
+      tags: 
+        - Cart
+      security:
+        - bearerAuth: [] 
+      requestBody: 
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Cart'
+      parameters:
+        - name: id
+          in: path
+          description: update Cart by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+    
+    delete:
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: get Cart by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+  
+  /transaction: 
+    post: 
+      tags:
+        - Transaction
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Transaction'
+      responses:
+        '201':
+          description: Created
+        '405':
+          description: Invalid input
+    get:
+      tags:
+        - Transaction
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+      
+  /transaction/{id}:
+    get:
+      tags:
+        - Transaction
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: get Transaction by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+
+    put: 
+      tags: 
+        - Transaction 
+      security:
+        - bearerAuth: []
+      requestBody: 
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Transaction'
+      parameters:
+        - name: id
+          in: path
+          description: update Transaction by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+    
+    delete:
+      tags:
+        - Transaction
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: get Transaction by id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        fullname:
+          type: string
+          example: aldi
+        username:
+          type: string
+          example: John
+        password:
+          type: string
+          example: password
+        email:
+          type: string
+          example: john@email.com
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+          example: John
+        password:
+          type: string
+          example: password
+    
+    Token:
+      type: object
+      properties:
+        token: 
+          type: string 
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2NzQyMzY4NzMsInVzZXJfaWQiOjF9.6-uWlQ6EX1IVpadlWfyG0xcPAgM54Vs9huqXJfBni-Y
+    
+    Category:
+      type: object
+      properties:
+        name:
+          type: string
+          example: String
+        code:
+          type: string
+          example: code
+
+    Product: 
+      type: object 
+      properties:
+        categorycode:
+          type: string 
+          example: string
+        name:
+          type: string 
+          example: string 
+        description:
+          type: string 
+          example: string 
+        price: 
+          type: integer
+          example: 100000
+        stock:
+          type: integer
+          example: 200
+    
+    Payment:
+      type: object
+      properties:
+        name:
+          type: string
+          example: String
+        code:
+          type: string
+          example: code
+    
+    Cart: 
+      type: object 
+      properties:
+        product_id:
+          type: integer
+          example: 1
+        quantity:
+          type: integer
+          example: 1
+        amount:
+          type: integer
+          example: 1
+    
+    Transaction:
+      type: object 
+      properties:
+        card_id:
+          type: integer
+          example: 1
+        payment_method_code:
+          type: string 
+          example: string
+
+  securitySchemes:
+    bearerAuth:        
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
@@ -86,7 +717,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "API Online Store",
-	Description:      "You can visit the GitHub repository athttps://github.com/aldiset/online_store",
+	Description:      "You can visit the GitHub repository at https://github.com/aldiset/online_store",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

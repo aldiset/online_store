@@ -20,7 +20,7 @@ type UserCreate struct {
 
 func RegisterUser(c *gin.Context) {
 	var data UserCreate
-
+	Logger(c)
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -51,7 +51,7 @@ type LoginData struct {
 
 func Login(c *gin.Context) {
 	var data LoginData
-
+	Logger(c)
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -74,6 +74,7 @@ func Login(c *gin.Context) {
 
 func CurrentUser(c *gin.Context) {
 	user_id, err := middleware.ExtractTokenID(c)
+	Logger(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

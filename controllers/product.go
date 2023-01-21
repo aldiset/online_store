@@ -18,6 +18,7 @@ type ProductInput struct {
 
 func CreateProduct(c *gin.Context) {
 	var input ProductInput
+	Logger(c)
 	user_id, err := middleware.ExtractTokenID(c)
 
 	if err != nil {
@@ -54,6 +55,7 @@ func CreateProduct(c *gin.Context) {
 
 func GetAllProduct(c *gin.Context) {
 	var product []models.Product
+	Logger(c)
 	models.DB.Find(&product)
 	c.JSON(http.StatusOK, Response{
 		Status:  "success",
@@ -64,6 +66,7 @@ func GetAllProduct(c *gin.Context) {
 
 func GetProductById(c *gin.Context) {
 	var product models.Product
+	Logger(c)
 	id := c.Param("id")
 	if err := models.DB.First(&product, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{
@@ -84,6 +87,7 @@ func UpdateProduct(c *gin.Context) {
 	var product models.Product
 	var input ProductInput
 	var updateinput models.Product
+	Logger(c)
 	id := c.Param("id")
 	user_id, err := middleware.ExtractTokenID(c)
 
@@ -124,6 +128,7 @@ func UpdateProduct(c *gin.Context) {
 
 func DeleteProduct(c *gin.Context) {
 	var product models.Product
+	Logger(c)
 	id := c.Param("id")
 	if err := models.DB.First(&product, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{

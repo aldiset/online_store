@@ -2,7 +2,8 @@ openapi: '3.0.3'
 info:
   title: API Online Store
   version: '1.0'
-
+servers:
+  - url: /api
 paths:
   /auth/register:
     post:
@@ -38,7 +39,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Login' 
+                $ref: '#/components/schemas/Token' 
         '405':
           description: Invalid input
   
@@ -51,10 +52,6 @@ paths:
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Login' 
         '405':
           description: Invalid input
       
@@ -626,6 +623,13 @@ components:
         password:
           type: string
           example: password
+    
+    Token:
+      type: object
+      properties:
+        token: 
+          type: string 
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2NzQyMzY4NzMsInVzZXJfaWQiOjF9.6-uWlQ6EX1IVpadlWfyG0xcPAgM54Vs9huqXJfBni-Y
     
     Category:
       type: object

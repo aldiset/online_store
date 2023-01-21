@@ -15,6 +15,7 @@ type CartInput struct {
 
 func CreateCart(c *gin.Context) {
 	var input CartInput
+	Logger(c)
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -39,6 +40,7 @@ func CreateCart(c *gin.Context) {
 
 func GetAllCart(c *gin.Context) {
 	var cart []models.Cart
+	Logger(c)
 	models.DB.Find(&cart)
 	c.JSON(http.StatusOK, Response{
 		Status:  "success",
@@ -49,6 +51,7 @@ func GetAllCart(c *gin.Context) {
 
 func GetCartById(c *gin.Context) {
 	var cart models.Cart
+	Logger(c)
 	id := c.Param("id")
 	if err := models.DB.First(&cart, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{
@@ -69,6 +72,7 @@ func UpdateCart(c *gin.Context) {
 	var cart models.Cart
 	var input CartInput
 	var updateinput models.Cart
+	Logger(c)
 	id := c.Param("id")
 
 	if err := models.DB.First(&cart, id).Error; err != nil {
@@ -100,6 +104,7 @@ func UpdateCart(c *gin.Context) {
 
 func DeleteCart(c *gin.Context) {
 	var cart models.Cart
+	Logger(c)
 	id := c.Param("id")
 	if err := models.DB.First(&cart, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{

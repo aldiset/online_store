@@ -35,6 +35,7 @@ func GetUserByID(id uint) (models.User, error) {
 
 func GetUserById(c *gin.Context) {
 	var user models.User
+	Logger(c)
 	id := c.Param("id")
 	if err := models.DB.First(&user, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{
@@ -44,6 +45,7 @@ func GetUserById(c *gin.Context) {
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, Response{
 		Status:  "success",
 		Message: "success",
@@ -51,14 +53,11 @@ func GetUserById(c *gin.Context) {
 	})
 }
 
-// @Summary get all user
-// @ID get-all-user
-// @Produce json
-// @Success 200 {object} models.User
-// @Router /user [get]
 func GetAllUser(c *gin.Context) {
 	var user []models.User
+	Logger(c)
 	models.DB.Find(&user)
+	Logger(c)
 	c.JSON(http.StatusOK, Response{
 		Status:  "success",
 		Message: "success",
@@ -70,6 +69,7 @@ func UpdateUser(c *gin.Context) {
 	var user models.User
 	var input UserCreate
 	var updateinput models.User
+	Logger(c)
 	id := c.Param("id")
 
 	if err := models.DB.First(&user, id).Error; err != nil {
@@ -103,6 +103,7 @@ func UpdateUser(c *gin.Context) {
 
 func DeleteUser(c *gin.Context) {
 	var user models.User
+	Logger(c)
 	id := c.Param("id")
 	if err := models.DB.First(&user, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, Response{
