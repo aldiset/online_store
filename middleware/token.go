@@ -1,11 +1,14 @@
 package middleware
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"online_store/models"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -24,12 +27,15 @@ func GenerateToken(user_id uint) (string, error) {
 	claims["exp"] = time.Now().Add(time.Hour * time.Duration(tokenLifespan)).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
 }
 
 func TokenValid(c *gin.Context) error {
 	tokenString := ExtractToken(c)
+	erro := GetUserByToken(tokenString)
+	if erro != nil {
+		return erro
+	}
 	_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -56,7 +62,6 @@ func ExtractToken(c *gin.Context) string {
 
 func ExtractTokenID(c *gin.Context) (uint, error) {
 	tokenString := ExtractToken(c)
-
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -77,4 +82,12 @@ func ExtractTokenID(c *gin.Context) (uint, error) {
 		return uint(uid), nil
 	}
 	return 0, nil
+}
+
+func GetUserByToken(token string) error {
+	var user models.User
+	if err := models.DB.First(&user, "token = ?", token).Error; err != nil {
+		return errors.New("Token Expired")
+	}
+	return nil
 }

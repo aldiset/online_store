@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"online_store/middleware"
 	"online_store/models"
@@ -9,7 +10,7 @@ import (
 )
 
 type ProductInput struct {
-	CategoryCode string `json:"category_code"`
+	CategoryCode string `json:"categorycode"`
 	Name         string `json:"name"`
 	Description  string `json:"description"`
 	Price        int    `json:"price"`
@@ -55,8 +56,18 @@ func CreateProduct(c *gin.Context) {
 
 func GetAllProduct(c *gin.Context) {
 	var product []models.Product
+	var category models.Category
 	Logger(c)
-	models.DB.Find(&product)
+	categoryQuery := c.Query("category")
+	if categoryQuery != "" {
+		fmt.Println(categoryQuery)
+		models.DB.Where("name = ?", categoryQuery).Or("code = ?", categoryQuery).First(&category)
+		models.DB.Where("category_code = ?", category.Code).Find(&product)
+		fmt.Println(category.Code)
+	} else {
+		models.DB.Find(&product)
+	}
+
 	c.JSON(http.StatusOK, Response{
 		Status:  "success",
 		Message: "success",

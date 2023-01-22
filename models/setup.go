@@ -14,12 +14,12 @@ var DB *gorm.DB
 
 func ConnectDB() {
 	err := godotenv.Load()
-
 	if err != nil {
-		log.Fatalf("Cannt load Environment")
+		fmt.Println(err)
 	}
 
 	DBDriver := os.Getenv("DB_DRIVER")
+	fmt.Println(DBDriver)
 	DBUser := os.Getenv("DB_USER")
 	DBPassword := os.Getenv(("DB_PASSWORD"))
 	DBHost := os.Getenv("DB_HOST")
@@ -27,7 +27,7 @@ func ConnectDB() {
 	DBName := os.Getenv("DB_NAME")
 
 	DBUrl := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", DBUser, DBPassword, DBHost, DBPort, DBName)
-
+	fmt.Println(DBUrl)
 	DB, err = gorm.Open(DBDriver, DBUrl)
 
 	if err != nil {

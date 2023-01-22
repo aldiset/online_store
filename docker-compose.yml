@@ -1,0 +1,48 @@
+version: "3.1"
+
+services:
+  web:
+    container_name: gin-online-store
+    image: gin-online-store:1.0
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysql
+      - mongo
+    environment:
+      DB_HOST : mysql                
+      DB_DRIVER : 'mysql'                      
+      DB_USER : 'root'
+      DB_NAME : 'online_store'
+      DB_PORT : 3306 
+      API_SECRET : 'secret'
+      TOKEN_HOUR_LIFESPAN : 2
+      MONGO_HOST : mongo
+      MONGO_PORT : 27017
+    restart: always
+    networks:
+      - web_network
+  
+  mongo:
+    container_name: mongo
+    image: mongo:6.0.3
+    ports: 
+      - 27017:27017
+    restart: always
+    networks:
+      - web_network
+  
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    ports: 
+      - 3306:3306
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD : 'yes'
+      MYSQL_DATABASE : 'online_store'
+    networks:
+      - web_network
+
+networks:
+  web_network:
+    name: web_network

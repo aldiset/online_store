@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"online_store/models"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -91,6 +92,7 @@ func UpdateUser(c *gin.Context) {
 	updateinput.Username = input.Username
 	updateinput.Password = string(password)
 	updateinput.Email = input.Email
+	updateinput.UpdateAt = time.Now()
 
 	models.DB.Model(&user).Updates(updateinput)
 
