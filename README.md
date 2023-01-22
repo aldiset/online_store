@@ -31,3 +31,6 @@ between relationships.
 - Clone source code ``` git clone https://github.com/aldiset/online_store ```
 - Run command ``` docker-compose up ``` or ``` docker-compose up -d``` (make sure docker-compose is installed).
 - You can access ```localhost:8080 ``` or ```127.0.0.1:8080``` as base path.
+
+# Access Swagger
+- You can access swagger from ```http://localhost:8080/api/docs/index.html#/```
