@@ -34,3 +34,4 @@ between relationships.
 
 # Access Swagger
 - You can access swagger from ```http://localhost:8080/api/docs/index.html#/```
+[asset_access-swagger.webm](https://user-images.githubusercontent.com/52232543/213930130-dd45d11c-4af4-4382-b8bc-23baf28d3262.webm)
