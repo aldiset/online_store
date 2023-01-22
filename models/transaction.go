@@ -8,6 +8,6 @@ type Transaction struct {
 	PaymentMethodCode string        `json:"payment_method_code"`
 	CreatedAt         time.Time     `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt          time.Time     `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
-	Cart              Cart          `gorm:"references:Id"`
-	PaymentMethod     PaymentMethod `gorm:"references:Code"`
+	Cart              Cart          `gorm:"foreignKey:CartID"`
+	PaymentMethod     PaymentMethod `gorm:"foreignKey:PaymentMethodCode"`
 }

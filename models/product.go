@@ -14,6 +14,6 @@ type Product struct {
 	Stock        int       `json:"stock"`
 	CreatedAt    time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt     time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
-	User         User      `gorm:"references:Id" json:"user"`       //use User.Id
-	Category     Category  `gorm:"references:Code" json:"category"` //Use Category.Code
+	User         User      `gorm:"foreignKey:Id" json:"user"`       //use User.Id
+	Category     Category  `gorm:"foreignKey:Code" json:"category"` //Use Category.Code
 }
