@@ -5,7 +5,7 @@ Online Store Backend side using Golang (Gin, Gorm, JWT, MySQL, and MongoDB)
 Implement the ER Diagram. ERD is a diagram that describes the relationship between data objects that have relationships
 between relationships.
 
-![alt text](/asset/erd-online-store.png)
+![alt text](/asset/erd.png)
 
 
 # Flow Apps
