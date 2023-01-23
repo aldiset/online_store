@@ -3,7 +3,7 @@ version: "3.1"
 services:
   web:
     container_name: gin-online-store
-    image: gin-online-store:1.0
+    image: akarkode/gin-online-store:1.0
     ports:
       - 8080:8080
     depends_on:
